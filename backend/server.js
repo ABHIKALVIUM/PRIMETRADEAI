@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createServer as createViteServer } from 'vite';
 
 import { connectDB } from './config/db.js';
 import { connectRedis } from './config/redis.js';
@@ -23,7 +22,13 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 5000;
 
-  app.use(cors());
+  app.use(cors({
+    origin: [
+      'http://localhost:5173',
+      process.env.FRONTEND_URL || ''
+    ],
+    credentials: true
+  }));
   app.use(express.json());
 
   app.use('/api/v1/auth', authRoutes);
@@ -38,19 +43,12 @@ async function startServer() {
     });
   });
 
+  // ✅ FIX: Removed vite import entirely — backend is API only on Render
+  // Frontend is deployed separately on Vercel
   if (process.env.NODE_ENV === 'production') {
-    const distPath = path.resolve(__dirname, '../frontend/dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+    app.get('/', (req, res) => {
+      res.json({ status: 'API is running' });
     });
-  } else {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-      root: path.resolve(__dirname, '../frontend'),
-    });
-    app.use(vite.middlewares);
   }
 
   app.use(errorHandler);
