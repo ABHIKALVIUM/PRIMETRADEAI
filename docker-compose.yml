@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # 1. Node.js backend REST API
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/monorepo_db
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=production_ultra_secure_secret_hash_key_10023
+      - JWT_EXPIRES_IN=7d
+    depends_on:
+      - mongodb
+      - redis
+    restart: always
+
+  # 2. Database storage (MongoDB)
+  mongodb:
+    image: mongo:5.0-focal
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  # 3. High-performance cache layer (Redis)
+  redis:
+    image: redis:7.0-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_cache:/data
+    restart: always
+
+volumes:
+  mongo_data:
+    driver: local
+  redis_cache:
+    driver: local

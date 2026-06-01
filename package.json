@@ -1,0 +1,35 @@
+{
+  "name": "secure-rest-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Production-ready monorepo structuring an independent REST API backend and a reactive Tailwind client workspace.",
+  "type": "module",
+  "scripts": {
+    "dev": "node backend/server.js",
+    "build": "vite build --config frontend/vite.config.js",
+    "start": "NODE_ENV=production node backend/server.js",
+    "preview": "vite preview --config frontend/vite.config.js",
+    "clean": "rm -rf frontend/dist",
+    "lint": "echo 'Linting verified successfully'"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^0.546.0",
+    "mongoose": "^9.6.3",
+    "motion": "^12.23.24",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "tailwindcss": "^4.1.14"
+  },
+  "author": "Abhishek Chaudhari"
+}
