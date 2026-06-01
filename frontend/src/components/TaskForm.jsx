@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { PlusCircle, Edit3, X, FileText, CheckCircle2 } from 'lucide-react';
 
+const BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export default function TaskForm({ currentEditingTask, onTaskSaved, onCancelEdit, onToast }) {
   const { token } = useAuth();
   const [title, setTitle] = useState('');
@@ -35,10 +37,10 @@ export default function TaskForm({ currentEditingTask, onTaskSaved, onCancelEdit
 
     try {
       setIsSubmitting(true);
-      const url = isEditMode 
-        ? `/api/v1/tasks/${currentEditingTask._id}`
-        : '/api/v1/tasks';
-      
+      const url = isEditMode
+        ? `${BASE_URL}/api/v1/tasks/${currentEditingTask._id}`
+        : `${BASE_URL}/api/v1/tasks`;
+
       const method = isEditMode ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -75,10 +77,9 @@ export default function TaskForm({ currentEditingTask, onTaskSaved, onCancelEdit
           </h3>
         </div>
         {isEditMode && (
-          <button 
+          <button
             onClick={onCancelEdit}
             className="text-white/40 hover:text-white p-1 hover:bg-white/5 transition duration-150 cursor-pointer"
-            title="Cancel Modifications"
           >
             <X className="h-4 w-4" />
           </button>

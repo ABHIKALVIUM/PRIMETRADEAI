@@ -2,6 +2,9 @@ import React, { createContext, useState, useEffect, useContext, useCallback } fr
 
 const AuthContext = createContext(null);
 
+// ✅ FIX: Use env variable for production, empty string for local (Vite proxy handles it)
+const BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
   const [user, setUser] = useState(null);
@@ -16,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       setLoading(true);
-      const res = await fetch('/api/v1/auth/me', {
+      const res = await fetch(`${BASE_URL}/api/v1/auth/me`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }
@@ -46,11 +49,9 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch('/api/v1/auth/register', {
+      const res = await fetch(`${BASE_URL}/api/v1/auth/register`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, role })
       });
       const result = await res.json();
@@ -75,11 +76,9 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch('/api/v1/auth/login', {
+      const res = await fetch(`${BASE_URL}/api/v1/auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
       const result = await res.json();
@@ -107,16 +106,7 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   };
 
-  const value = {
-    user,
-    token,
-    loading,
-    error,
-    register,
-    login,
-    logout,
-    setError
-  };
+  const value = { user, token, loading, error, register, login, logout, setError };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
-import { 
-  Trash2, Edit, Calendar, CheckSquare, Clock, AlertTriangle, 
-  Layers, RefreshCw 
+import {
+  Trash2, Edit, Calendar, CheckSquare, Clock, AlertTriangle,
+  Layers, RefreshCw
 } from 'lucide-react';
+
+const BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export default function TaskList({ onEditTask, refreshTrigger, onToast }) {
   const { token, user } = useAuth();
@@ -22,10 +24,8 @@ export default function TaskList({ onEditTask, refreshTrigger, onToast }) {
       if (statusFilter) queryStr += `&status=${statusFilter}`;
       if (priorityFilter) queryStr += `&priority=${priorityFilter}`;
 
-      const res = await fetch(`/api/v1/tasks?${queryStr}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const res = await fetch(`${BASE_URL}/api/v1/tasks?${queryStr}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await res.json();
 
@@ -51,11 +51,9 @@ export default function TaskList({ onEditTask, refreshTrigger, onToast }) {
   const handleDelete = async (id) => {
     if (!window.confirm('Confirm permanent removal of this entity record?')) return;
     try {
-      const res = await fetch(`/api/v1/tasks/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/v1/tasks/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await res.json();
 
@@ -95,7 +93,7 @@ export default function TaskList({ onEditTask, refreshTrigger, onToast }) {
             Tracking Ledger ({totalCount} Records found)
           </div>
         </div>
-        
+
         <div className="flex flex-wrap items-center gap-3">
           <select
             value={statusFilter}
@@ -119,10 +117,9 @@ export default function TaskList({ onEditTask, refreshTrigger, onToast }) {
             <option value="high">High Severity</option>
           </select>
 
-          <button 
+          <button
             onClick={fetchTasks}
             className="p-2 border border-white/10 hover:border-white bg-[#0A0A0A] transition text-white/60 hover:text-white cursor-pointer"
-            title="Sync Ledger"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
@@ -146,8 +143,8 @@ export default function TaskList({ onEditTask, refreshTrigger, onToast }) {
             const canModify = isTaskOwner || (user && user.role === 'admin');
 
             return (
-              <div 
-                key={task._id} 
+              <div
+                key={task._id}
                 className="bg-[#121212] border border-white/10 hover:border-white/20 p-6 transition duration-200 flex flex-col md:flex-row md:items-center justify-between gap-6 group relative"
               >
                 <div className="space-y-3 max-w-2xl">
@@ -155,11 +152,9 @@ export default function TaskList({ onEditTask, refreshTrigger, onToast }) {
                     <h4 className={`text-base font-bold tracking-tight text-white ${task.status === 'completed' ? 'line-through text-white/40' : ''}`}>
                       {task.title}
                     </h4>
-                    
                     <span className={`px-2 py-0.5 border text-[9px] font-mono uppercase tracking-wider font-bold ${getPriorityColor(task.priority)}`}>
                       {task.priority}
                     </span>
-
                     <span className="px-2 py-0.5 border border-white/10 bg-[#0A0A0A] text-white/50 text-[9px] font-mono uppercase tracking-wider flex items-center gap-1.5">
                       {getStatusIcon(task.status)}
                       <span>{task.status}</span>
@@ -189,14 +184,12 @@ export default function TaskList({ onEditTask, refreshTrigger, onToast }) {
                       <button
                         onClick={() => onEditTask(task)}
                         className="px-3 py-1.5 border border-white/10 hover:border-white text-[10px] font-mono uppercase tracking-widest font-bold text-white transition bg-[#1A1A1A] cursor-pointer"
-                        title="Edit Entity Parameters"
                       >
                         Modify
                       </button>
                       <button
                         onClick={() => handleDelete(task._id)}
                         className="px-3 py-1.5 border border-red-900/50 hover:border-red-500 bg-red-950/20 hover:bg-red-950/60 text-[10px] font-mono uppercase tracking-widest font-bold text-red-400 transition cursor-pointer"
-                        title="Delete Entity"
                       >
                         Purge
                       </button>
