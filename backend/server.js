@@ -22,13 +22,16 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 5000;
 
+  // ✅ FIX: Added Vercel URL to CORS whitelist
   app.use(cors({
     origin: [
       'http://localhost:5173',
-      process.env.FRONTEND_URL || ''
+      'https://primetradeai-2mfk.vercel.app',
+      /\.vercel\.app$/
     ],
     credentials: true
   }));
+
   app.use(express.json());
 
   app.use('/api/v1/auth', authRoutes);
@@ -43,8 +46,6 @@ async function startServer() {
     });
   });
 
-  // ✅ FIX: Removed vite import entirely — backend is API only on Render
-  // Frontend is deployed separately on Vercel
   if (process.env.NODE_ENV === 'production') {
     app.get('/', (req, res) => {
       res.json({ status: 'API is running' });
