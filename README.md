@@ -2,6 +2,8 @@
 
 Welcome to the **Monorepo Task REST Engine**! This project is a production-grade implementation of a clean, decoupled full-stack architecture. It is designed as a modular monorepo separated completely into a standalone API `/backend` and a highly reactive client desk `/frontend`.
 
+DEPLOY LINK: https://primetradeai-6vbl.vercel.app/
+
 ---
 
 ## 1. Directory Structure
